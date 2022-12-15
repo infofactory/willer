@@ -1,0 +1,29 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block content %}
+
+<div id="slideshow" data-page="{{page|default:0}}"{% if page %} style="transform:translateX(-{{page}}00vw)"{% endif %}>
+    <div class="container">
+        <div class="slide">
+
+            <h1>Best willers</h1>
+            {% for willer in willers %}
+                <div class="row">
+                    <span>{{forloop.counter}}</span>
+                    <span>{{willer}}</span>
+                    <span>{{willer.total_answers}}</span>
+                </div>
+            {% endfor %}
+        
+            <div class="pagination">
+                <a href="/?new-auditing" class="btn"><i class="far fa-circle-plus"></i> New auditing</a>
+                <a target="_blank" href="https://www.iamawiller.com/" class="btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> Go to website</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</div>
+
+{% endblock content %}

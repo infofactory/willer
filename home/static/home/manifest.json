@@ -1,0 +1,25 @@
+{
+    "short_name": "Willer",
+    "name": "I am a Willer",
+    "icons": [
+        {
+          "src": "/static/home/img/icon-192.png",
+          "type": "image/png",
+          "sizes": "192x192",
+          "purpose": "maskable"
+        },
+        {
+          "src": "/static/home/img/icon-512.png",
+          "type": "image/png",
+          "sizes": "512x512",
+          "purpose": "any"
+        }
+      ],
+    "id": "/?source=pwa",
+    "start_url": "/?source=pwa",
+    "background_color": "#00b7fc",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#00b7fc",
+    "description": "Help other people"
+  }

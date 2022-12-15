@@ -1,0 +1,310 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block content %}
+<div id="slideshow" data-page="{{page|default:0}}"{% if page %} style="transform:translateX(-{{page}}00vw)"{% endif %}>
+    <div class="container">
+        <div class="slide">
+
+            {% if request.session.willer %}
+            <h1><span class="number">0</span> Enter your data</h1>
+
+            <div class="user-info">
+                <p>Nickname: <label class="text-label">{{request.session.willer.nickname}}</label></p>
+                <p>Email: <label class="text-label">{{request.session.willer.email}}</label></p>    
+            </div>
+
+
+                <div class="pagination">
+                    <a href="?new-user" class="btn"><i class="far fa-user"></i> Change user</a>
+                    <a href="#" class="btn next">Next <i class="far fa-arrow-right"></i></a>
+                </div>
+
+            {% else %}
+            <h1>Enter your data</h1>
+
+            <p class="info">Please enter your email address and choose a nickname</p>
+
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{message}}
+                </div>
+            {% endfor %}
+
+            <form method="post">
+                <div class="field-group">
+                    <label for="field-nickname" class="text-label">Nickname</label>
+                    <input autofocus value="{{request.session.willer.nickname}}" type="text" id="field-nickname" name="nickname" required maxlength="30"> 
+                </div>
+
+                <div class="field-group">
+                    <label for="field-email" class="text-label">Email</label>
+                    <input value="{{request.session.willer.email}}" type="email" id="field-email" name="email" required>    
+                </div>
+
+                <div class="pagination" style="justify-content: center">
+                    <button class="btn" type="submit"><i class="far fa-right-to-bracket"></i> Log In</button>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+<div class="container">
+    <div class="slide" data-page="1">
+
+        <h1><span class="number">1</span> Location</h1>
+
+        <div class="alert alert-danger">
+            You must allow access to your location
+        </div>
+
+        <div id="map">
+
+        </div>
+
+
+        <div class="pagination">
+            <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> Back</a>
+            <a href="#" class="btn next" style="display: none">Next <i class="far fa-arrow-right"></i></a>    
+        </div>
+        
+    </div>
+</div>
+<div class="container">
+<div class="slide" data-page="2">
+
+    <h1><span class="number">2</span> Station</h1>
+
+<div class="choices">
+    <div class="choice square">
+        <input id="field-train" type="radio" name="station" value="T"{% if request.session.answer.station == 'T' %} checked{% endif %}>
+        <label for="field-train"><i class="fa-regular fa-train"></i>
+            <h3>Train</h3></label>
+    </div>
+    <div class="choice square">
+        <input id="field-metro" type="radio" name="station" value="M"{% if request.session.answer.station == 'M' %} checked{% endif %}>
+        <label for="field-metro"><i class="fa-solid fa-train-subway-tunnel"></i>
+            <h3>Metro</h3></label>
+    </div>
+</div>
+    <div class="pagination">
+        <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> Back</a>
+        <a href="#" class="btn next" style="display: none">Next <i class="far fa-arrow-right"></i></a>    
+    </div>
+    
+</div>
+</div>
+<div class="container">
+<div class="slide" data-page="3">
+
+    <h1><span class="number">3</span> Levels</h1>
+
+    <div class="choices">
+        <div class="choice square">
+            <input id="field-ground" type="radio" name="levels" value="1"{% if request.session.answer.levels == '1' %} checked{% endif %}>
+            <label for="field-ground"><i class="fa-solid fa-person-arrow-down-to-line"></i>
+                <h3>Only ground</h3></label>
+        </div>
+        <div class="choice square">
+            <input id="field-levels" type="radio" name="levels" value="2"{% if request.session.answer.levels == '2' %} checked{% endif %}>
+            <label for="field-levels"><i class="fa-solid fa-circle-sort"></i>
+                <h3>Different levels</h3></label>
+        </div>
+    </div>
+
+    <div class="thankyou" id="step-free">
+        <p>Is this station step free?</p>
+        <label><input type="radio" name="step_free" value="1"> Yes</label>
+        <label><input type="radio" name="step_free" value="0"> No</label>
+    </div>
+
+    <div class="pagination">
+        <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> Back</a>
+        <a href="#" class="btn next" style="display: none">Next <i class="far fa-arrow-right"></i></a>    
+    </div>
+    
+</div>
+</div>
+<div class="container">
+<div class="slide" data-page="4">
+
+    <h1><span class="number">4</span> Devices</h1>
+
+    <div class="field-group">
+        <label for="field-zone" class="text-label">Zone or Area</label>
+        <input type="text" id="field-zone" name="zone" required maxlength="100">    
+    </div>
+
+    <p class="info">Select available devices and indicate if they are working.</p>
+
+    <div class="choices devices">
+        <div class="choice square">
+            <label><i class="fa-regular fa-stairs"></i>
+            <h3>Stairs</h3></label>
+        </div>
+        <div class="choice">
+        </div>
+        
+        <div class="choice square">
+            <label><i class="fa-regular fa-elevator"></i>
+            <h3>Lift</h3></label>
+        </div>
+        <div class="choice radio-group">
+            <div><label><input type="radio" name="lift" value="1" checked>Don’t know</label></div>
+            <div><label><input type="radio" name="lift" value="2">It’s working</label></div>
+            <div><label><input type="radio" name="lift" value="3">Out of order</label></div>
+        </div>
+
+        <div class="choice square">
+            <label><i><img src="{% static 'home/img/stairs-lift.svg' %}" alt=""></i>
+            <h3>Stairs lift</h3></label>
+        </div>
+        <div class="choice radio-group">
+            <div><label><input type="radio" name="stairs_lift" value="1" checked>Don’t know</label></div>
+            <div><label><input type="radio" name="stairs_lift" value="2">It’s working</label></div>
+            <div><label><input type="radio" name="stairs_lift" value="3">Out of order</label></div>
+        </div>
+
+        <div class="choice square">
+            <label><div><i class="far fa-arrow-up"></i> <i class="fa-regular fa-escalator"></i></div>
+            <h3>Up escalator</h3></label>
+        </div>
+        <div class="choice radio-group">
+            <div><label><input type="radio" name="up_escalator" value="1" checked>Don’t know</label></div>
+            <div><label><input type="radio" name="up_escalator" value="2">It’s working</label></div>
+            <div><label><input type="radio" name="up_escalator" value="3">Out of order</label></div>
+        </div>
+
+        <div class="choice square">
+            <label><div><i class="far fa-arrow-down"></i> <i class="fa-regular fa-escalator"></i></div>
+            <h3>Down escalator</h3></label>
+        </div>
+        <div class="choice radio-group">
+            <div><label><input type="radio" name="down_escalator" value="1" checked>Don’t know</label></div>
+            <div><label><input type="radio" name="down_escalator" value="2">It’s working</label></div>
+            <div><label><input type="radio" name="down_escalator" value="3">Out of order</label></div>
+        </div>
+    </div>
+
+    <div class="pagination">
+        <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> Back</a>
+        <a href="#" class="btn next" style="display: none">Next <i class="far fa-arrow-right"></i></a>    
+    </div>
+    
+</div>
+</div>
+
+<div class="container">
+    <div class="slide" data-page="5">
+    
+        <h1><span class="number">5</span> Take a picture</h1>
+    
+        <div class="choices" rel="lift">
+            <div class="choice square report">
+                <h3><i class="fa-regular fa-elevator"></i> Lift</h3>
+                <p></p>
+                <label class="camera" for="file-image-lift"><i class="fa-regular fa-camera"></i></label>
+            </div>
+            <div class="choice">
+                <img class="preview" src="{% static 'home/img/placeholder.png' %}"">
+                <input accept="image/*" capture="camera" name="lift_image" type="file" id="file-image-lift">
+            </div>
+        </div>
+
+        <div class="choices" rel="stairs_lift">
+            <div class="choice square report">
+                <h3><i><img src="{% static 'home/img/stairs-lift.svg' %}" alt=""></i> Stairs Lift</h3>
+                <p></p>
+                <label class="camera" for="file-image-stairs-lift"><i class="fa-regular fa-camera"></i></label>
+            </div>
+            <div class="choice">
+                <img class="preview" src="{% static 'home/img/placeholder.png' %}"">
+                <input accept="image/*" capture="camera" name="stairs_lift_image" type="file" id="file-image-stairs-lift">
+            </div>
+        </div>
+
+        <div class="choices" rel="up_escalator">
+            <div class="choice square report">
+                <h3><i class="far fa-arrow-up"></i> <i class="fa-regular fa-escalator"></i> Up escalator</h3>
+                <p></p>
+                <label class="camera" for="file-image-up-escalator"><i class="fa-regular fa-camera"></i></label>
+            </div>
+            <div class="choice">
+                <img class="preview" src="{% static 'home/img/placeholder.png' %}"">
+                <input accept="image/*" capture="camera" name="up_escalator_image" type="file" id="file-image-up-escalator">
+            </div>
+        </div>
+
+        <div class="choices" rel="down_escalator">
+            <div class="choice square report">
+                <h3><i class="far fa-arrow-down"></i> <i class="fa-regular fa-escalator"></i> Down escalator</h3>
+                <p></p>
+                <label class="camera" for="file-image-down-escalator"><i class="fa-regular fa-camera"></i></label>
+            </div>
+            <div class="choice">
+                <img class="preview" src="{% static 'home/img/placeholder.png' %}"">
+                <input accept="image/*" capture="camera" name="down_escalator_image" type="file" id="file-image-down-escalator">
+            </div>
+        </div>
+
+
+
+        <div class="thankyou" id="nothing-working">
+            <p>No running device selected.<br>
+            Is it possible to enter or exit this area without using the stairs?</p>
+            <label><input type="radio" name="no_stairs_needed" value="1"> Yes</label>
+            <label><input type="radio" name="no_stairs_needed" value="0"> No</label>
+        </div>
+
+        <div class="pagination">
+            <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> Back</a>
+            <a href="#" class="btn next" style="display: none">Next <i class="far fa-arrow-right"></i></a>    
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="container">
+    <div class="slide">
+    
+        <h1><span class="number">6</span> Thank you</h1>
+        <div class="thankyou">
+            <p>Would you like to add a new area or finish?</p>
+        </div>
+    
+        <div class="pagination">
+            <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> Back</a>
+            <a href="#" class="btn next"><i class="far fa-flag-checkered"></i> Finish</a>    
+        </div>
+
+        <div class="pagination" style="justify-content: center">
+            <a href="?new-area" class="btn"><i class="far fa-circle-plus"></i> Add new area</a>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="slide">
+    
+        <h1><span class="number">7</span> The end</h1>
+    
+        <div class="thankyou">
+            <p>Thank you for your time!</p>
+            <p>Continue to help millions of people by reporting the status of devices in train and underground stations.</p>
+        </div>
+
+        <div class="pagination">
+            <a href="?new-auditing" class="btn"><i class="far fa-circle-plus"></i> New auditing</a>
+            <a href="/best" class="btn"><i class="far fa-award"></i> Best willers</a>
+        </div>
+
+        
+    </div>
+</div>
+
+</div>
+
+{% endblock content %}
