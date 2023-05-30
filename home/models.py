@@ -1,4 +1,3 @@
-import uuid
 from django.db import models
 
 
@@ -54,3 +53,19 @@ class Answer(models.Model):
         verbose_name = 'Rilevazione'
         verbose_name_plural = 'Rilevazioni'
         ordering = ('-updated',)
+
+
+
+class Translation(models.Model):
+    label = models.CharField(max_length=500, unique=True)
+    label_it = models.CharField(max_length=500, blank=True)
+    label_en = models.CharField(max_length=500, blank=True)
+
+
+    def __str__(self):
+        return self.label
+        
+    class Meta:
+        verbose_name = 'Traduzione'
+        verbose_name_plural = 'Traduzioni'
+        ordering = ('label',)

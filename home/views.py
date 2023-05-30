@@ -1,13 +1,19 @@
-from http.client import HTTPResponse
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from django.utils import translation
 
 from .models import *
 
 @csrf_exempt
 def home(request):
+
+    # Cambio lingua
+    if 'lang' in request.GET:
+        translation.activate(request.GET['lang'])
+        return redirect(request.path)
+        
     context = {}
 
     if request.method == 'POST':

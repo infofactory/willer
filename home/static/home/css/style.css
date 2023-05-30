@@ -38,6 +38,32 @@ header h1 {
     margin: 0;
 }
 
+header .languages {
+    font-family: sans-serif;
+    text-transform: uppercase;
+    position: absolute;
+    right: 20px;
+    top: 8px;
+}
+
+header .languages a {
+    font-size: 14px;
+    margin-left: 5px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    color: #fff;
+    border: 1px solid #fff;
+    text-decoration: none;
+}
+
+header .languages a.active {
+    background-color: var(--yellow);
+    color: #000;
+}
+
 footer {
     text-align: center;
     background-color: #333;
@@ -64,12 +90,12 @@ footer a {
     text-decoration: none;
 }
 
-h1 {
+h2 {
     font-size: 30px;
     font-family: 'Gochi Hand', cursive;
 }
 
-h1 .number {
+h2 .number {
     background-color: var(--yellow);
     color: #fff;
     height: 50px;
@@ -134,7 +160,7 @@ img {
 }
 
 .slide {
-    max-width: 500px;
+    max-width: 700px;
     padding: 15px;
     margin: 0 auto;
 }
@@ -160,6 +186,38 @@ img {
 
 .btn:focus, .btn:hover {
     border: 1px solid #000;
+}
+
+
+.status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.status .btn {
+    width: 100%;
+    text-align: center;
+    font-size: 20px;
+    margin: 15px;
+    opacity: .8;
+    transition: all .3s;
+    transform: scale(.85);
+    background-color: #000;
+    color: #fff;
+}
+
+.status .btn.active i {
+    font-size: 40px;
+}
+
+.status .btn.active {
+    color: #000;
+    background-color: var(--yellow);
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 50px yellow
 }
 
 .info {
@@ -191,95 +249,38 @@ label.text-label {
     border-color: #f00;
 }
 
-.choices {
+
+
+
+.choices .choice label {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-
-.choice {
-    font-size: 22px;
-    width: 45%;
-    margin-bottom: 20px;
-}
-
-.choice.report {
-    margin-bottom: 0;
-}
-
-.choices[rel] {
-    display: none;
-    border-bottom: 1px solid #fff;
-    padding-top: 25px;
-}
-
-.choice.square input[type=checkbox], .choice.square input[type=radio] {
-    display: none;
-}
-
-.choice.square label {
-    background-color: #f8f8f8;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    aspect-ratio: 1;
-    padding: 30px 15px;
-    text-align: center;
+    background-color: var(--yellow);
+    align-items: center;
+    padding: 15px;
+    border-radius: 15px;
+    margin: 15px 0;
     cursor: pointer;
 }
 
-.choice label.camera {
-    padding: 5px 15px;
-    aspect-ratio: auto;
+.choices .choice label:hover {
+    background-color: #000;
+    color: #fff;
 }
 
-.choice label i {
-    font-size: 40px;
+.choices .choice label h3 {
+    margin: 0;
+    font-size: 30px;
 }
 
-.choice.square input:not(.selected):checked + label, .choice.square label.selected {
-    background-color: var(--yellow);
-    position: relative;
-    z-index: 1;
+.choices .choice input[type=radio] {
+    display: none;
 }
 
-.choice.square label:not(.selected):hover, .choice.square label:not(.selected):focus {
-    background-color: #f0f0f0;
-}
 
-.choice.radio-group {
-    font-size: 18px;
-    line-height: 2.5;
-    justify-content: center;
-    padding: 0 10px;
-    background-color: #fff;
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    visibility: hidden;
-    position: relative;
-}
 
-.choice.radio-group::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: -100px;
-    width: 100px;
-    height: 2px;
-    border-top: 1px solid #fff;
-    border-bottom: 1px solid #fff;
-}
 
-.choice select {
-    width: 100%;
-}
 
-.choice.report h3, .choice.report p {
-    margin-top: 0;
-}
 
 input[type=file] {
     display: none;

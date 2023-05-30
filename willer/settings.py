@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'home',
+    'voxpop',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,6 +79,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'voxpop': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'voxpop',
+        'USER': 'voxpop',
+        'PASSWORD': 'Lì es bona!',
+        'HOST': '127.0.0.1',
+   #    'PORT': '5431',
     }
 }
 
@@ -99,6 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+DATABASE_ROUTERS = ['willer.routers.DBRouter']
 
 
 # Internationalization

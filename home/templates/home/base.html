@@ -1,14 +1,15 @@
-{% load static %}
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{LANGUAGE_CODE}}">
 <head>
     <meta charset="utf-8">
     <link rel="manifest" href="{% static 'home/manifest.json' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#00b7fc">
     <script src="https://kit.fontawesome.com/51f11f635e.js" crossorigin="anonymous"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNVxw8FdB3VDaPE1XXSpJ1hCAamhmD3o" defer></script>
-    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNVxw8FdB3VDaPE1XXSpJ1hCAamhmD3o" defer></script> -->
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}?{% now 'u' %}">
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet"> 
     <title>I am a Willer</title>
     <script>
@@ -28,6 +29,10 @@
 <body>
     <header>
         <h1>I am a willer</h1>
+        <div class="languages">
+            <a href="/?lang=it"{% if LANGUAGE_CODE == 'it' %} class="active"{% endif %}>IT</a>
+            <a href="/?lang=en"{% if LANGUAGE_CODE == 'en' %} class="active"{% endif %}>EN</a>
+        </div>
     </header>
 
     {% block content %}
@@ -37,6 +42,54 @@
     <footer>
         <p>Powered by <img src="{% static 'home/img/logo-white.svg' %}" alt=""> – <a target="_blank" href="https://www.iubenda.com/privacy-policy/42138467">Privacy policy</a></p>
     </footer>
-    <script src="{% static 'home/js/scripts.js' %}"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- <script src="{% static 'home/js/scripts.js' %}"></script> -->
+
+    <script>
+        // Create a Vue application
+        const app = Vue.createApp({
+            data() {
+                return {
+                    page: 0,
+                    lat: 0,
+                    lng: 0,
+                    stations: [],
+                    lifts: [],
+                    location_type: 'M',
+                    station: null,
+                    lift: null,
+                    status: null,
+                }
+            },
+            methods: {
+
+                geoloc() {
+                    this.lat = Math.random() - 9
+                    this.lng = Math.random() + 38
+
+                    this.lat = 38.73383859614848
+                    this.lng = -9.138131269364441
+
+                    fetch('/api/stations?lat=' + this.lat + '&lng=' + this.lng)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.stations = data
+                        })
+                },
+                loadLifts(station) {
+                    this.station = station
+                    fetch('/api/lifts?station_id=' + this.station.pk)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.lifts = data
+                        })
+                }
+            },
+            delimiters: ['[[', ']]'],
+        })
+
+        app.mount('#app')
+
+    </script>
 </body>
 </html>

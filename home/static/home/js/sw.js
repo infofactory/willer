@@ -4,7 +4,7 @@ self.addEventListener('install', e => {
         cache => {
             return cache.addAll([
                 '/static/home/js/scripts.js',
-                '/static/home/css/style.css',
+                '/static/home/css/style.css?a',
             ]).then(() => self.skipWaiting());
         }))
 });
