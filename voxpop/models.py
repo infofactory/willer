@@ -16,6 +16,7 @@ class City(models.Model):
     class Meta:
         verbose_name_plural = "Cities"
         db_table = "stations_city"
+        managed = False
 
 
 class Stop(models.Model):
@@ -125,6 +126,7 @@ class Stop(models.Model):
     class Meta:
         ordering=('location_type', '-level', 'name',)
         db_table = "stations_stop"
+        managed = False
     
 
 
@@ -189,3 +191,4 @@ class Lift(models.Model):
     class Meta:
         ordering=('stop', 'type', 'name',)
         db_table = "stations_lift"
+        managed = False

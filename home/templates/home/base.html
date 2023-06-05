@@ -55,34 +55,73 @@
                     lng: 0,
                     stations: [],
                     lifts: [],
-                    location_type: 'M',
+                    location_type: null,
                     station: null,
                     lift: null,
                     status: null,
+                    areas: [],
+                    area: null,
+                    liftCategories: [
+                        {pk:0, name: 'Lift'},
+                        {pk:1, name: 'Stairlift'},
+                        {pk:4, name: 'Escalator'},
+                    ],
+                    domande: [],
+                    risposte: {},
                 }
             },
             methods: {
-
+                nextPage() {
+                    this.page++
+                    window.scrollTo(0, 0)
+                },
+                prevPage() {
+                    this.page--
+                    window.scrollTo(0, 0)
+                },
                 geoloc() {
                     this.lat = Math.random() - 9
                     this.lng = Math.random() + 38
 
-                    this.lat = 38.73383859614848
-                    this.lng = -9.138131269364441
+                    this.lat = 38.73383859614848 + Math.random() / 10 - 0.05
+                    this.lng = -9.138131269364441 + Math.random() / 10 - 0.05
 
-                    fetch('/api/stations?lat=' + this.lat + '&lng=' + this.lng)
+                    fetch('/api/places/?location_type=' + this.location_type + '&lat=' + this.lat + '&lng=' + this.lng)
                         .then(response => response.json())
                         .then(data => {
                             this.stations = data
                         })
                 },
+                placeChosen(station) {
+                    if (this.location_type == 'M') {
+                        this.loadLifts(station)
+                        this.nextPage()
+                    }
+                    if (this.location_type == 'R') {
+                        this.loadQuestions()
+                        this.nextPage()
+                    }
+                },
                 loadLifts(station) {
                     this.station = station
-                    fetch('/api/lifts?station_id=' + this.station.pk)
+                    fetch('/api/lifts/?station_id=' + this.station.pk)
                         .then(response => response.json())
                         .then(data => {
                             this.lifts = data
+                         
                         })
+                },
+                loadQuestions() {
+                    fetch('/api/areas/')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.areas = data
+
+                        })
+                },
+                sendFeedback() {
+                    console.log(this.status)
+                    this.page = 6
                 }
             },
             delimiters: ['[[', ']]'],

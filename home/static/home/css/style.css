@@ -188,6 +188,9 @@ img {
     border: 1px solid #000;
 }
 
+.pagination .btn {
+    background-color: #fff;
+}
 
 .status {
     display: flex;
@@ -218,6 +221,10 @@ img {
     opacity: 1;
     transform: scale(1);
     box-shadow: 0 0 50px yellow
+}
+
+.btn.send {
+    width: 100%;
 }
 
 .info {
@@ -273,11 +280,86 @@ label.text-label {
     font-size: 30px;
 }
 
+.choices .choice label img.preview + h3 {
+    margin-top: 15px;
+}
+
 .choices .choice input[type=radio] {
     display: none;
 }
 
+.choices .choice .place-info {
+    width: 100%;
+    margin-right: 15px;
+}
 
+.choices .choice .place-info h3 {
+    margin: 0;
+}
+
+.choices .choice .place-info p {
+    margin: 0;
+}
+
+
+.domanda {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+.domanda h3 {
+    margin: 0 0 15px;
+}
+
+.domanda ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+
+.place-preview {
+    position: relative;
+    height: 300px;
+    background: #fff;
+}
+
+.place-preview .place-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0,0,0,.5);
+    color: #fff;
+    padding: 15px;
+}
+
+.place-preview .place-name h4, .place-preview .place-name p {
+    margin: 0;
+}
+
+.place-preview .place-name h4 {
+    font-size: 20px;
+}
+
+.place-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.place-preview h3 {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,.9);
+    padding: 10px;
+    color: var(--yellow);
+}
 
 
 

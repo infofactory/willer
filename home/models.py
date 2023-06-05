@@ -69,3 +69,59 @@ class Translation(models.Model):
         verbose_name = 'Traduzione'
         verbose_name_plural = 'Traduzioni'
         ordering = ('label',)
+
+
+class Luogo(models.Model):
+    name = models.CharField(max_length=100)
+    lat = models.FloatField()
+    lon = models.FloatField()
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = 'Luogo'
+        verbose_name_plural = 'Luoghi'
+        ordering = ('name',)
+
+
+class Area(models.Model):
+    nome = models.CharField(max_length=50)
+    ordine = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.nome
+    
+    class Meta:
+        verbose_name = 'Area'
+        verbose_name_plural = 'Aree'
+        ordering = ('ordine',)
+    
+
+class Domanda(models.Model):
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name="domande")
+    domanda = models.CharField(max_length=500)
+    multi = models.BooleanField(default=False)
+    ordine = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.domanda
+
+    class Meta:
+        verbose_name = 'Domanda'
+        verbose_name_plural = 'Domande'
+        ordering = ('ordine',)
+
+
+class Risposta(models.Model):
+    domanda = models.ForeignKey(Domanda, on_delete=models.CASCADE, related_name="risposte")
+    risposta = models.CharField(max_length=500)
+    ordine = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.risposta
+
+    class Meta:
+        verbose_name = 'Risposta'
+        verbose_name_plural = 'Risposte'
+        ordering = ('ordine',)

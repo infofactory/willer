@@ -14,8 +14,7 @@
             <div class="choices">
 
                 <div class="choice">
-                <input v-model="location_type" type="radio" value="M" id="field-type-metro">
-                <label for="field-type-metro" @click="page++; geoloc()">
+                <label for="field-type-metro" @click="location_type='M'; nextPage(); geoloc()">
                     <i class="fa-solid fa-train-subway-tunnel"></i>
                     <h3>{% translate_label 'Metro' %}</h3>
                     <i class="fa-solid fa-chevron-right"></i>
@@ -23,8 +22,7 @@
                 </div>
 
                 <div class="choice">
-                    <input v-model="location_type" type="radio" value="R" id="field-type-restaurant">
-                    <label for="field-type-restaurant" @click="page++; geoloc()">
+                    <label for="field-type-restaurant" @click="location_type='R'; nextPage(); geoloc()">
                         <i class="fa-solid fa-fork-knife"></i>
                         <h3>{% translate_label 'Restaurant' %}</h3>
                         <i class="fa-solid fa-chevron-right"></i>
@@ -35,17 +33,14 @@
             </div>
     
     
-            <div class="pagination">
-                <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
-                <a href="#" class="btn next" style="display: none">{% translate_label 'Next' %} <i class="far fa-arrow-right"></i></a>    
-            </div>
+    
             
         </div>
     </div>
 
 
     <div class="container">
-        <div class="slide" data-page="0">
+        <div class="slide" data-page="1">
     
             <h2><span class="number">2</span> {% translate_label 'Select your station' %}</h2>
     
@@ -55,7 +50,7 @@
 
                 <div class="choice" v-for="station in stations">
                     <input v-model="station_id" type="radio" :value="station.pk" :id="'station-' + station.pk">
-                    <label @click="page++; loadLifts(station)" :for="'station-' + station.pk">
+                    <label @click="placeChosen(station)" :for="'station-' + station.pk">
                         <i class="fa-solid fa-train-subway-tunnel"></i>
                         <h3 v-if="station">[[station.fields.name]]</h3>
                         <i class="fa-solid fa-chevron-right"></i>
@@ -65,30 +60,34 @@
     
     
             <div class="pagination">
-                <a @click="page--" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
-                <a href="#" class="btn next" style="display: none">{% translate_label 'Next' %} <i class="far fa-arrow-right"></i></a>    
+                <a @click="prevPage()" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
             </div>
             
         </div>
     </div>
 
 
-    <div class="container">
-        <div class="slide" data-page="0">
+
+  
+
+
+    <div class="container" v-show="location_type=='M'">
+        <div class="slide" data-page="2">
     
             <h2><span class="number">3</span> {% translate_label 'Choose the device' %}</h2>
     
             <h2 v-if="station">[[station.fields.name]]</h2>
             
-            <h3>Lifts</h3>
-
             <div class="choices">
 
                 <div class="choice" v-for="lift in lifts">
                     <input v-model="lift_id" type="radio" :value="lift.pk" :id="'lift-' + lift.pk">
-                    <label @click="this.lift = lift; page++;" :for="'lift-' + lift.pk">
-                        <img class="preview" :src="'https://open.willeasy.app/media/' + lift.fields.image" alt="">
+                    <label @click="this.lift = lift; this.status=null; nextPage();" :for="'lift-' + lift.pk">
+                        <div class="place-info">
+                        <img v-if="lift.fields.image" class="preview" :src="'https://open.willeasy.app/lifts/' + lift.pk + '/thumbnail/'" alt="">
                         <h3>[[lift.fields.friendly_name || lift.fields.name]]</h3>
+                        <p>[[lift.fields.from_area]] <i class="fa-regular fa-arrow-right"></i>  [[lift.fields.to_area]] --<strong>[[lift.fields.status]]</strong>  </p>
+                        </div>
                         <i class="fa-solid fa-chevron-right"></i>
                     </label>
                 </div>
@@ -96,14 +95,101 @@
     
     
             <div class="pagination">
-                <a @click="page--" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
-                <a href="#" class="btn next" style="display: none">{% translate_label 'Next' %} <i class="far fa-arrow-right"></i></a>    
+                <a @click="prevPage()" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
             </div>
             
         </div>
     </div>
 
 
+
+    <div class="container" v-show="location_type=='M'">
+        <div class="slide" data-page="3">
+
+        <h2><span class="number">4</span> {% translate_label 'Is it working?' %}</h2>
+
+        <div class="place-preview" v-if="lift">
+            <h3>[[station.fields.name]]</h3>
+            <img :src="'https://open.willeasy.app/lifts/' + lift.pk + '/thumbnail/'" alt="">
+            <div class="place-name">
+            <h4>[[lift.fields.friendly_name || lift.fields.name]]</h4>
+            <p>[[lift.fields.from_area]] <i class="fa-regular fa-arrow-right"></i>  [[lift.fields.to_area]]</p>
+            </div>
+        </div>
+
+
+        <div class="status">
+            <button class="btn ok" :class="{active:this.status === 1}" @click="status=1">
+                <i class="fa-regular fa-face-smile"></i>
+                <p>{% translate_label 'Lift is working' %}</p>
+            </button>
+            <button class="btn ko" :class="{active:this.status === 0}" @click="status=0">
+                <i class="fa-regular fa-face-sad-tear"></i>
+                <p>{% translate_label 'Lift is not working' %}</p>
+            </button>
+        </div>
+
+        <button @click="sendFeedback()" class="btn send" v-show="this.status !== null">
+            <i class="fa-solid fa-send"></i>
+            {% translate_label 'Send feedback' %}
+        </button>
+
+        <div class="pagination">
+            <a @click="prevPage()" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
+        </div>
+        
+    </div>
+</div>
+
+<div class="container" v-show="location_type=='R'">
+    <div class="slide" data-page="4">
+    
+            <h2><span class="number">2</span> {% translate_label 'Scegli area' %}</h2>
+                [[risposte]]
+            <div class="choices">
+
+                <div class="choice" v-for="area in areas">
+                    <input type="radio" :value="area.pk" :id="'area-' + area.pk">
+                    <label @click="nextPage(); this.area=area" :for="'area-' + area.pk">
+                        <i class="fa-solid fa-train-subway-tunnel"></i>
+                        <h3 v-if="area">[[area.nome]]</h3>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </label>
+                </div>
+            </div>
+    
+    
+            <div class="pagination">
+                <a @click="prevPage()" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
+            </div>
+            
+        </div>
+    </div>
+
+
+    <div class="container" v-show="location_type=='R'">
+        <div class="slide" data-page="5">
+    
+            <h2><span class="number">2</span> {% translate_label 'Caratteristiche' %}</h2>
+            
+            <p v-if="area">[[area.nome]]</p>
+            
+            <div class="domanda" v-for="domanda in area.domande" v-if="area" v-key="domanda.pk">
+                <h3>[[domanda.domanda]]</h3>
+                <ul>
+                    <li v-for="risposta in domanda.risposte" v-key="risposta.pk">
+                        <label><input :name="'risp-' + domanda.pk" :type="domanda.multi ? 'checkbox' : 'radio'" :checked="this.risposte[domanda.pk] == risposta.pk" @change="this.risposte[domanda.pk] = risposta.pk"> [[risposta.risposta]]</label>
+                    </li>
+                </ul>
+            </div>
+    
+    
+            <div class="pagination">
+                <a @click="prevPage()" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
+            </div>
+            
+        </div>
+    </div>
     <!-- <div class="container">
         <div class="slide" data-page="22">
 
@@ -155,233 +241,23 @@
 
 
 
+
+
 <div class="container">
-    <div class="slide" data-page="1">
+<div class="slide" data-page="6">
 
-        <h2><span class="number">4</span> {% translate_label 'Is it working?' %}</h2>
-
-        <h2 v-if="station">[[station.fields.name]]</h2>
-        <h3 v-if="lift">[[lift.fields.friendly_name || lift.fields.name]]</h3>
-
-
-
-        <div class="status">
-            <button class="btn ok" :class="{active:this.status === 1}" @click="status=1">
-                <i class="fa-regular fa-face-smile"></i>
-                <p>{% translate_label 'Lift is working' %}</p>
-            </button>
-            <button class="btn ko" :class="{active:this.status === 0}" @click="status=0">
-                <i class="fa-regular fa-face-sad-tear"></i>
-                <p>{% translate_label 'Lift is not working' %}</p>
-            </button>
-        </div>
-
-        <button class="btn send">
-            <i class="fa-solid fa-send"></i>
-            {% translate_label 'Send feedback' %}
-        </button>
-
-        <div class="pagination">
-            <a @click="page--" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
-            <a href="#" class="btn next" style="display: none">{% translate_label 'Next' %} <i class="far fa-arrow-right"></i></a>    
-        </div>
-        
-    </div>
-</div>
-<div class="container">
-<div class="slide" data-page="2">
-
-    <h1><span class="number">2</span> {% translate_label 'Station' %}</h1>
-
-<div class="choices">
-    <div class="choice square">
-        <input id="field-train" type="radio" name="station" value="T"{% if request.session.answer.station == 'T' %} checked{% endif %}>
-        <label for="field-train"><i class="fa-regular fa-train"></i>
-            <h3>{% translate_label 'Train' %}</h3></label>
-    </div>
-    <div class="choice square">
-        <input id="field-metro" type="radio" name="station" value="M"{% if request.session.answer.station == 'M' %} checked{% endif %}>
-        <label for="field-metro"><i class="fa-solid fa-train-subway-tunnel"></i>
-            <h3>{% translate_label 'Metro' %}</h3></label>
-    </div>
-</div>
+    <h2><span class="number">5</span> {% translate_label 'Thank you' %}!</h2>
+ 
     <div class="pagination">
-        <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
-        <a href="#" class="btn next" style="display: none">{% translate_label 'Next' %} <i class="far fa-arrow-right"></i></a>    
-    </div>
-    
-</div>
-</div>
-<div class="container">
-<div class="slide" data-page="3">
-
-    <h1><span class="number">3</span> {% translate_label 'Levels' %}</h1>
-
-    <div class="choices">
-        <div class="choice square">
-            <input id="field-ground" type="radio" name="levels" value="1"{% if request.session.answer.levels == '1' %} checked{% endif %}>
-            <label for="field-ground"><i class="fa-solid fa-person-arrow-down-to-line"></i>
-                <h3>{% translate_label 'Only ground' %}</h3></label>
-        </div>
-        <div class="choice square">
-            <input id="field-levels" type="radio" name="levels" value="2"{% if request.session.answer.levels == '2' %} checked{% endif %}>
-            <label for="field-levels"><i class="fa-solid fa-circle-sort"></i>
-                <h3>{% translate_label 'Different levels' %}</h3></label>
-        </div>
-    </div>
-
-    <div class="thankyou" id="step-free">
-        <p>{% translate_label 'Is this station step free?' %}</p>
-        <label><input type="radio" name="step_free" value="1"> {% translate_label 'Yes' %}</label>
-        <label><input type="radio" name="step_free" value="0"> {% translate_label 'No' %}</label>
-    </div>
-
-    <div class="pagination">
-        <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
-        <a href="#" class="btn next" style="display: none">{% translate_label 'Next' %} <i class="far fa-arrow-right"></i></a>    
-    </div>
-    
-</div>
-</div>
-<div class="container">
-<div class="slide" data-page="4">
-
-    <h1><span class="number">4</span> {% translate_label 'Devices' %}</h1>
-
-    <div class="field-group">
-        <label for="field-zone" class="text-label">{% translate_label 'Zone or Area' %}</label>
-        <input type="text" id="field-zone" name="zone" required maxlength="100">    
-    </div>
-
-    <p class="info">{% translate_label 'Select available devices and indicate if they are working.' %}</p>
-
-    <div class="choices devices">
-        <div class="choice square">
-            <label><i class="fa-regular fa-stairs"></i>
-            <h3>{% translate_label 'Stairs' %}</h3></label>
-        </div>
-        <div class="choice">
-        </div>
-        
-        <div class="choice square">
-            <label><i class="fa-regular fa-elevator"></i>
-            <h3>{% translate_label 'Lift' %}</h3></label>
-        </div>
-        <div class="choice radio-group">
-            <div><label><input type="radio" name="lift" value="1" checked>{% translate_label 'Don’t know' %}</label></div>
-            <div><label><input type="radio" name="lift" value="2">{% translate_label 'It’s working' %}</label></div>
-            <div><label><input type="radio" name="lift" value="3">{% translate_label 'Out of order' %}</label></div>
-        </div>
-
-        <div class="choice square">
-            <label><i><img src="{% static 'home/img/stairs-lift.svg' %}" alt=""></i>
-            <h3>{% translate_label 'Stairs lift' %}</h3></label>
-        </div>
-        <div class="choice radio-group">
-            <div><label><input type="radio" name="stairs_lift" value="1" checked>{% translate_label 'Don’t know' %}</label></div>
-            <div><label><input type="radio" name="stairs_lift" value="2">{% translate_label 'It’s working' %}</label></div>
-            <div><label><input type="radio" name="stairs_lift" value="3">{% translate_label 'Out of order' %}</label></div>
-        </div>
-
-        <div class="choice square">
-            <label><div><i class="far fa-arrow-up"></i> <i class="fa-regular fa-escalator"></i></div>
-            <h3>{% translate_label 'Up escalator' %}</h3></label>
-        </div>
-        <div class="choice radio-group">
-            <div><label><input type="radio" name="up_escalator" value="1" checked>{% translate_label 'Don’t know' %}</label></div>
-            <div><label><input type="radio" name="up_escalator" value="2">{% translate_label 'It’s working' %}</label></div>
-            <div><label><input type="radio" name="up_escalator" value="3">{% translate_label 'Out of order' %}</label></div>
-        </div>
-
-        <div class="choice square">
-            <label><div><i class="far fa-arrow-down"></i> <i class="fa-regular fa-escalator"></i></div>
-            <h3>{% translate_label 'Down escalator' %}</h3></label>
-        </div>
-        <div class="choice radio-group">
-            <div><label><input type="radio" name="down_escalator" value="1" checked>{% translate_label 'Don’t know' %}</label></div>
-            <div><label><input type="radio" name="down_escalator" value="2">{% translate_label 'It’s working' %}</label></div>
-            <div><label><input type="radio" name="down_escalator" value="3">{% translate_label 'loOut of order' %}</label></div>
-        </div>
-    </div>
-
-    <div class="pagination">
-        <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
-        <a href="#" class="btn next" style="display: none">{% translate_label 'Next' %} <i class="far fa-arrow-right"></i></a>    
+        <a @click="page=0" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Nuova' %}</a>
+        <a href="https://iamawiller.com" class="btn next">{% translate_label 'Willer' %} <i class="far fa-arrow-right"></i></a>    
     </div>
     
 </div>
 </div>
 
-<div class="container">
-    <div class="slide" data-page="5">
-    
-        <h1><span class="number">5</span> {% translate_label 'Take a picture' %}</h1>
-    
-        
 
 
-
-
-
-
-
-        <!-- FOTO -->
-
-        <div class="thankyou" id="nothing-working">
-            <p>{% translate_label 'No running device selected.' %}<br>
-                {% translate_label 'Is it possible to enter or exit this area without using the stairs?' %}</p>
-            <label><input type="radio" name="no_stairs_needed" value="1"> Yes</label>
-            <label><input type="radio" name="no_stairs_needed" value="0"> No</label>
-        </div>
-
-        <div class="pagination">
-            <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
-            <a href="#" class="btn next" style="display: none">{% translate_label 'Next' %} <i class="far fa-arrow-right"></i></a>    
-        </div>
-        
-    </div>
-</div>
-
-
-
-<div class="container">
-    <div class="slide">
-    
-        <h1><span class="number">6</span> {% translate_label 'Thank you' %}</h1>
-        <div class="thankyou">
-            <p>{% translate_label 'Would you like to add a new area or finish?' %}</p>
-        </div>
-    
-        <div class="pagination">
-            <a href="#" class="btn prev"><i class="far fa-arrow-left"></i> {% translate_label 'Back' %}</a>
-            <a href="#" class="btn next"><i class="far fa-flag-checkered"></i> {% translate_label 'Finish' %}</a>    
-        </div>
-
-        <div class="pagination" style="justify-content: center">
-            <a href="?new-area" class="btn"><i class="far fa-circle-plus"></i> {% translate_label 'Add new area' %}</a>
-        </div>
-    </div>
-</div>
-
-
-<div class="container">
-    <div class="slide">
-    
-        <h1><span class="number">7</span> {% translate_label 'The end' %}</h1>
-    
-        <div class="thankyou">
-            <p>{% translate_label 'Thank you for your time!' %}</p>
-            <p>{% translate_label 'Continue to help millions of people by reporting the status of devices in train and underground stations.' %}</p>
-        </div>
-
-        <div class="pagination">
-            <a href="?new-auditing" class="btn"><i class="far fa-circle-plus"></i> {% translate_label 'New auditing' %}</a>
-            <a href="/best" class="btn"><i class="far fa-award"></i> {% translate_label 'Best willers' %}</a>
-        </div>
-
-        
-    </div>
-</div>
 
 </div>
 
