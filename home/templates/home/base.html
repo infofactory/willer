@@ -7,8 +7,8 @@
     <link rel="manifest" href="{% static 'home/manifest.json' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#00b7fc">
+    <link rel="icon" href="{% static 'home/img/favicon.png' %}">
     <script src="https://kit.fontawesome.com/51f11f635e.js" crossorigin="anonymous"></script>
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNVxw8FdB3VDaPE1XXSpJ1hCAamhmD3o" defer></script> -->
     <link rel="stylesheet" href="{% static 'home/css/style.css' %}?{% now 'u' %}">
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet"> 
     <title>I am a Willer</title>
@@ -40,7 +40,20 @@
     {% endblock %}
 
     <footer>
-        <p>Powered by <img src="{% static 'home/img/logo-white.svg' %}" alt=""> – <a target="_blank" href="https://www.iubenda.com/privacy-policy/42138467">Privacy policy</a></p>
+        <div class="willeasy">
+                    <p><img src="{% static 'home/img/logo-white.svg' %}" alt="">
+                        <a target="_blank" href="https://creativecommons.org/licenses/by-nd/4.0/legalcode"><img src="{% static 'home/img/logo-cc.png' %}" alt="Terms and conditions - Creative Commons"></a>
+            </p>
+            <p>Willeasy srl - ©2023 - VAT: IT02936410303 <br>
+            <a target="_blank" href="https://www.iubenda.com/privacy-policy/42138467">Privacy policy</a></p>
+        </div>
+        <div class="eu">
+            <img src="{% static 'home/img/logo-eu.png' %}" alt="European Union">
+            <img src="{% static 'home/img/logo-uia.png' %}" alt="Urban Innovative Actions"><br>
+        <p>This project is co-financed by the European Regional Development
+Fund <br> through the Urban Innovative Actions Initiative</p>
+        </div>
+        
     </footer>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <!-- <script src="{% static 'home/js/scripts.js' %}"></script> -->
@@ -61,6 +74,7 @@
                     status: null,
                     areas: [],
                     area: null,
+                    filePreview: null,
                     liftCategories: [
                         {pk:0, name: 'Lift'},
                         {pk:1, name: 'Stairlift'},
@@ -83,16 +97,24 @@
                     this.lat = Math.random() - 9
                     this.lng = Math.random() + 38
 
-                    this.lat = 38.73383859614848 + Math.random() / 10 - 0.05
-                    this.lng = -9.138131269364441 + Math.random() / 10 - 0.05
+                    this.lat = 38.73383859614848 //+ Math.random() / 10 - 0.05
+                    this.lng = -9.138131269364441 //+ Math.random() / 10 - 0.05
 
-                    fetch('/api/places/?location_type=' + this.location_type + '&lat=' + this.lat + '&lng=' + this.lng)
-                        .then(response => response.json())
-                        .then(data => {
-                            this.stations = data
-                        })
+                    navigator.geolocation.getCurrentPosition(position => {
+                        this.lat = position.coords.latitude
+                        this.lng = position.coords.longitude
+
+                        fetch('/api/places/?location_type=' + this.location_type + '&lat=' + this.lat + '&lng=' + this.lng)
+                            .then(response => response.json())
+                            .then(data => {
+                                this.stations = data
+                            })
+                    })
+
+
                 },
                 placeChosen(station) {
+                    this.station = station
                     if (this.location_type == 'M') {
                         this.loadLifts(station)
                         this.nextPage()
@@ -101,6 +123,7 @@
                         this.loadQuestions()
                         this.nextPage()
                     }
+
                 },
                 loadLifts(station) {
                     this.station = station
@@ -119,9 +142,22 @@
 
                         })
                 },
+                showFilePreview(event) {
+                    const file = event.target.files[0]
+                    if (file) {
+                        filePreview = URL.createObjectURL(file)
+                    }
+                },
                 sendFeedback() {
-                    console.log(this.status)
-                    this.page = 6
+                    fetch('/api/segnalazioni/', {
+                        method: 'POST',
+                        body: new URLSearchParams({
+                            status: this.status,
+                            lift: this.lift.pk,
+                        })
+                    })
+                    this.page++
+                    window.scrollTo(0, 0)
                 }
             },
             delimiters: ['[[', ']]'],

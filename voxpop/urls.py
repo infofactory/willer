@@ -21,4 +21,5 @@ urlpatterns = [
     path('places/', views.places, name='places'),
     path('lifts/', views.lifts, name='lifts'),
     path('areas/', views.areas, name='areas'),
+    path('segnalazioni/', views.segnalazioni, name='segnalazioni'),
 ]

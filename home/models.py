@@ -85,7 +85,23 @@ class Luogo(models.Model):
         ordering = ('name',)
 
 
+class Categoria(models.Model):
+    name = models.CharField(max_length=100)
+    ordine = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = 'Categoria'
+        verbose_name_plural = 'Categorie'
+        ordering = ('ordine',)
+
+
+
+
 class Area(models.Model):
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, blank=True, null=True, related_name="aree")
     nome = models.CharField(max_length=50)
     ordine = models.IntegerField(default=1)
 
@@ -96,12 +112,37 @@ class Area(models.Model):
         verbose_name = 'Area'
         verbose_name_plural = 'Aree'
         ordering = ('ordine',)
+
+
+
+class Esigenza(models.Model):
+    nome = models.CharField(max_length=50)
+    ordine = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.nome
     
+    class Meta:
+        verbose_name = 'Esigenza'
+        verbose_name_plural = 'Esigenze'
+        ordering = ('ordine',)
+
 
 class Domanda(models.Model):
+    QUESTION_TYPES = (
+        ('radio', 'Radio'),
+        ('checkbox', 'Checkbox'),
+        ('text', 'Text'),
+        ('number', 'Number'),
+        ('textarea', 'Textarea'),
+        ('image', 'Foto'),
+        ('vote', 'Valutazione 1-4'),
+    )
+
+    esigenza = models.ManyToManyField(Esigenza, related_name="domande", blank=True)
     area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name="domande")
     domanda = models.CharField(max_length=500)
-    multi = models.BooleanField(default=False)
+    type = models.CharField(max_length=10, choices=QUESTION_TYPES, default='radio')
     ordine = models.IntegerField(default=0)
 
     def __str__(self):
@@ -110,7 +151,7 @@ class Domanda(models.Model):
     class Meta:
         verbose_name = 'Domanda'
         verbose_name_plural = 'Domande'
-        ordering = ('ordine',)
+        ordering = ('area', 'ordine',)
 
 
 class Risposta(models.Model):

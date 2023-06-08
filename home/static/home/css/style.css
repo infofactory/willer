@@ -74,16 +74,26 @@ footer {
     right: 0;
     bottom: 0;
     z-index: 1;
+    display: flex;
+    align-items: center;
+}
+
+footer .willeasy, footer .eu {
+    flex: 1;
 }
 
 footer p {
-    margin: 0;
+    margin: 6px 0;
+    font-size: 12px;
 }
 
 footer img {
     vertical-align: middle;
-    width: 100px;
+    max-width: 100px;
+    margin: 0 10px;
+    max-height: 40px;
 }
+
 
 footer a {
     color: var(--blue);
@@ -278,6 +288,7 @@ label.text-label {
 .choices .choice label h3 {
     margin: 0;
     font-size: 30px;
+    text-align: center;
 }
 
 .choices .choice label img.preview + h3 {
@@ -361,11 +372,47 @@ label.text-label {
     color: var(--yellow);
 }
 
+input[type=number] {
+    border: 1px solid #ccc;
+    padding: 3px 6px;
+    font-size: 24px;
+}
+
+.filePreview {
+    height: 160px;
+    width: 160px;
+    display: block;
+    border-radius: 15px;
+    background-color: #eee;
+    object-fit: cover;
+}
+
+.vote label {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 5px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 40px;
+    background: #eee;
+    font-size: 24px;
+}
+
+.vote input {
+    display: none;
+}
+
+.vote input:checked + label {
+    background: var(--blue);
+    color: #fff;
+}
 
 
 
 input[type=file] {
-    display: none;
+    xxdisplay: none;
 }
 
 img.preview {
@@ -375,19 +422,6 @@ img.preview {
     border-radius: 15px;
 }
 
-#step-free {
-    visibility: hidden;
-}
-
-#step-free p {
-    margin: 0;
-}
-
-#step-free input {
-    height: 20px;
-    width: 20px;
-    margin-left: 30px;
-}
 
 .thankyou {
     text-align: center;

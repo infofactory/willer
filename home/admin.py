@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.forms import CheckboxSelectMultiple
+
 from .models import *
 
 
@@ -12,6 +14,8 @@ class TranslationAdmin(admin.ModelAdmin):
 
 admin.site.register(Willer)
 
+admin.site.register(Categoria)
+admin.site.register(Esigenza)
 admin.site.register(Area)
 admin.site.register(Luogo)
 
@@ -22,6 +26,11 @@ class RispostaInline(admin.TabularInline):
 class DomandaAdmin(admin.ModelAdmin):
     list_display = ['domanda', 'area', 'ordine']
     list_filter = ['area']
+    
+    formfield_overrides = {
+        models.ManyToManyField: {'widget': CheckboxSelectMultiple},
+    }
+
     inlines = [RispostaInline]
 admin.site.register(Domanda, DomandaAdmin)
 

@@ -1,7 +1,7 @@
 from django.db import models
+from django.urls import reverse
 
-# Create your models here.
-
+from django.contrib.auth.models import User
 
 class City(models.Model):
     name = models.CharField(max_length=100)
@@ -192,3 +192,18 @@ class Lift(models.Model):
         ordering=('stop', 'type', 'name',)
         db_table = "stations_lift"
         managed = False
+
+
+class Segnalazione(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    lift = models.ForeignKey(Lift, on_delete=models.CASCADE)
+    working = models.BooleanField(default=True)
+    image = models.ImageField(blank=True, upload_to='segnalazioni')
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Segnalazioni"
+        ordering = ('-created',)
+
+    def __str__(self):
+        return f"{self.lift} - {self.working}"

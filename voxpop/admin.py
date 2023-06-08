@@ -14,3 +14,7 @@ class CityAdmin(admin.ModelAdmin):
 admin.site.register(City, CityAdmin)
 
 admin.site.register(Lift)
+
+class SegnalazioneAdmin(admin.ModelAdmin):
+    list_display = ['lift', 'working', 'user', 'created']
+admin.site.register(Segnalazione, SegnalazioneAdmin)
