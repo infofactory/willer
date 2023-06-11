@@ -9,8 +9,10 @@
     <meta name="theme-color" content="#00b7fc">
     <link rel="icon" href="{% static 'home/img/favicon.png' %}">
     <script src="https://kit.fontawesome.com/51f11f635e.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{% static 'home/css/style.css' %}?{% now 'u' %}">
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/style-white.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <title>I am a Willer</title>
     <script>
         if ('serviceWorker' in navigator) {
@@ -30,8 +32,9 @@
     <header>
         <h1>I am a willer</h1>
         <div class="languages">
-            <a href="/?lang=it"{% if LANGUAGE_CODE == 'it' %} class="active"{% endif %}>IT</a>
             <a href="/?lang=en"{% if LANGUAGE_CODE == 'en' %} class="active"{% endif %}>EN</a>
+            <a href="/?lang=pt"{% if LANGUAGE_CODE == 'pt' %} class="active"{% endif %}>PT</a>
+            <a href="/?lang=it"{% if LANGUAGE_CODE == 'it' %} class="active"{% endif %}>IT</a>
         </div>
     </header>
 
@@ -40,7 +43,9 @@
     {% endblock %}
 
     <footer>
-        <div class="willeasy">
+        <p><a href="https://willeasy.net/"><img style="width: 80px;" src="{% static 'home/img/logo-white.svg' %}" alt=""></a> VAT: IT02936410303 – <a target="_blank" href="https://www.iubenda.com/privacy-policy/42138467">Privacy policy</a></p>
+
+        <!-- <div class="willeasy">
                     <p><img src="{% static 'home/img/logo-white.svg' %}" alt="">
                         <a target="_blank" href="https://creativecommons.org/licenses/by-nd/4.0/legalcode"><img src="{% static 'home/img/logo-cc.png' %}" alt="Terms and conditions - Creative Commons"></a>
             </p>
@@ -52,20 +57,21 @@
             <img src="{% static 'home/img/logo-uia.png' %}" alt="Urban Innovative Actions"><br>
         <p>This project is co-financed by the European Regional Development
 Fund <br> through the Urban Innovative Actions Initiative</p>
-        </div>
+        </div> -->
         
     </footer>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- <script src="{% static 'home/js/scripts.js' %}"></script> -->
 
     <script>
         // Create a Vue application
         const app = Vue.createApp({
             data() {
                 return {
+                    esigenze: [],
+                    esigenze_utente: [],
                     page: 0,
-                    lat: 0,
-                    lng: 0,
+                    lat: null,
+                    lng: null,
                     stations: [],
                     lifts: [],
                     location_type: null,
@@ -75,6 +81,10 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                     areas: [],
                     area: null,
                     filePreview: null,
+                    geolocalizing: true,
+                    geolocalizing_error: false,
+                    sending: false,
+                    search_query: '',
                     liftCategories: [
                         {pk:0, name: 'Lift'},
                         {pk:1, name: 'Stairlift'},
@@ -83,6 +93,23 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                     domande: [],
                     risposte: {},
                 }
+            },
+            mounted() {
+                fetch('/api/esigenze/')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.esigenze = data
+                    })
+            },
+            computed: {
+                // se almeno una risposta è stata data, la pagina è compilata
+                compilato() {
+                    for (const [key, value] of Object.entries(this.risposte)) {
+                        if (value && !Array.isArray(value) || Array.isArray(value) && value.length > 0) {
+                            return true
+                        }
+                    }
+                },
             },
             methods: {
                 nextPage() {
@@ -94,24 +121,34 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                     window.scrollTo(0, 0)
                 },
                 geoloc() {
-                    this.lat = Math.random() - 9
-                    this.lng = Math.random() + 38
+                    // this.lat = Math.random() - 9
+                    // this.lng = Math.random() + 38
 
-                    this.lat = 38.73383859614848 //+ Math.random() / 10 - 0.05
-                    this.lng = -9.138131269364441 //+ Math.random() / 10 - 0.05
+                    // this.lat = 38.73383859614848 //+ Math.random() / 10 - 0.05
+                    // this.lng = -9.138131269364441 //+ Math.random() / 10 - 0.05
+                    this.geolocalizing = true
 
-                    navigator.geolocation.getCurrentPosition(position => {
-                        this.lat = position.coords.latitude
-                        this.lng = position.coords.longitude
-
-                        fetch('/api/places/?location_type=' + this.location_type + '&lat=' + this.lat + '&lng=' + this.lng)
-                            .then(response => response.json())
-                            .then(data => {
-                                this.stations = data
-                            })
-                    })
-
-
+                    if (!this.lat || !this.lng) {
+                        navigator.geolocation.getCurrentPosition(position => {
+                            this.lat = position.coords.latitude
+                            this.lng = position.coords.longitude
+                            this.loadPlaces()
+                        }, error => {
+                            this.geolocalizing = false
+                            this.geolocalizing_error = error.message
+                        })
+                    } else {
+                        this.loadPlaces()
+                    }
+                },
+                loadPlaces() {
+                    this.geolocalizing = true
+                    fetch('/api/places/?location_type=' + this.location_type + '&lat=' + this.lat + '&lng=' + this.lng + '&query=' + this.search_query)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.stations = data
+                            this.geolocalizing = false
+                        })
                 },
                 placeChosen(station) {
                     this.station = station
@@ -119,7 +156,7 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                         this.loadLifts(station)
                         this.nextPage()
                     }
-                    if (this.location_type == 'R') {
+                    if (this.location_type == 'R' || this.location_type == 'H') {
                         this.loadQuestions()
                         this.nextPage()
                     }
@@ -135,17 +172,39 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                         })
                 },
                 loadQuestions() {
-                    fetch('/api/areas/')
+                    const params = new URLSearchParams({
+                        category: this.location_type,
+                        esigenze: this.esigenze_utente,
+                    })
+                    const queryString = params.toString()
+
+
+                    fetch('/api/areas/?' + queryString)
                         .then(response => response.json())
                         .then(data => {
                             this.areas = data
-
+                            for (let area of this.areas) {
+                                for (let domanda of area.domande) {
+                                    this.risposte[domanda.pk] = null
+                                    if (domanda.type == 'checkbox' || domanda.type == 'image') {
+                                        this.risposte[domanda.pk] = []
+                                    }
+                                }
+                            }
                         })
                 },
-                showFilePreview(event) {
-                    const file = event.target.files[0]
-                    if (file) {
-                        filePreview = URL.createObjectURL(file)
+                showFilePreview(domanda, event) {
+                    const files = event.target.files
+                    for (let file of files) {
+                        const new_image = {url: URL.createObjectURL(file), name: file.name, image: null}
+                        console.log(new_image.name)
+                        const reader = new FileReader()
+                        reader.readAsDataURL(file)
+                        reader.onload = () => {
+                            new_image.image = reader.result
+                        }
+
+                        this.risposte[domanda.pk].push(new_image)
                     }
                 },
                 sendFeedback() {
@@ -158,7 +217,28 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                     })
                     this.page++
                     window.scrollTo(0, 0)
-                }
+                },
+                saveAnswers() {
+                    this.sending = true
+                    fetch('/api/rilevazioni/', {
+                        method: 'POST',
+                        body: JSON.stringify({luogo:this.station.pk, rilevazioni: this.risposte}),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        this.sending = false
+
+                        if (response.ok) {
+                            this.risposte = {}
+                            this.page +=2
+                            window.scrollTo(0, 0)
+                        } else {
+                            alert('Error sending data')
+                        }
+                    })
+                  
+                },
             },
             delimiters: ['[[', ']]'],
         })

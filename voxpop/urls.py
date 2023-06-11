@@ -22,4 +22,6 @@ urlpatterns = [
     path('lifts/', views.lifts, name='lifts'),
     path('areas/', views.areas, name='areas'),
     path('segnalazioni/', views.segnalazioni, name='segnalazioni'),
+    path('rilevazioni/', views.rilevazioni, name='rilevazioni'),
+    path('esigenze/', views.esigenze, name='esigenze'),
 ]

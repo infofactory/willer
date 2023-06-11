@@ -3,21 +3,20 @@ from django.forms import CheckboxSelectMultiple
 
 from .models import *
 
-
-@admin.register(Answer)
-class AnswerAdmin(admin.ModelAdmin):
-    list_display = ['willer', 'station', 'levels', 'updated']
-
-@admin.register(Translation)
-class TranslationAdmin(admin.ModelAdmin):
-    list_display = ['label', 'label_it']
-
 admin.site.register(Willer)
 
 admin.site.register(Categoria)
 admin.site.register(Esigenza)
-admin.site.register(Area)
 admin.site.register(Luogo)
+
+@admin.register(Text)
+class TextAdmin(admin.ModelAdmin):
+    list_display = ['code', 'get_text_short']
+
+@admin.register(Area)
+class AreaAdmin(admin.ModelAdmin):
+    list_display = ['nome', 'ordine', 'categoria']
+
 
 class RispostaInline(admin.TabularInline):
     model = Risposta
@@ -33,4 +32,9 @@ class DomandaAdmin(admin.ModelAdmin):
 
     inlines = [RispostaInline]
 admin.site.register(Domanda, DomandaAdmin)
+
+
+class RilevazioneAdmin(admin.ModelAdmin):
+    list_display = ['luogo', 'domanda', 'risposta_text', 'user', 'data']
+admin.site.register(Rilevazione, RilevazioneAdmin)
 

@@ -16,6 +16,10 @@ def home(request):
         
     context = {}
 
+    texts = {t.code: t.get_text for t in Text.objects.all()}
+    context['texts'] = texts
+
+
     if request.method == 'POST':
         context = {}
         email = request.POST.get('email')

@@ -33,6 +33,8 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'home',
     'voxpop',
+    'modeltranslation',
+    'ckeditor',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -86,7 +88,7 @@ DATABASES = {
         'USER': 'voxpop',
         'PASSWORD': 'Lì es bona!',
         'HOST': '127.0.0.1',
-   #    'PORT': '5431',
+       'PORT': '5431',
     }
 }
 
@@ -116,7 +118,13 @@ DATABASE_ROUTERS = ['willer.routers.DBRouter']
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'it'
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = (
+    ('en', 'English'),
+    ('it', 'Italiano'),
+    ('pt', 'Português'),
+)
 
 TIME_ZONE = 'Europe/Rome'
 
@@ -140,3 +148,19 @@ MEDIA_URL = 'media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+# Amazon SES
+EMAIL_HOST = 'email-smtp.eu-west-1.amazonaws.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'AKIASVRD6E4QSEFY5E5U'
+EMAIL_HOST_PASSWORD = 'BAt7Nhoy9dm9HTjQKhG58yR836Vqzhvfu9HOQQmxuI8J'
+EMAIL_USE_TLS = True
+
+DEFAULT_FROM_EMAIL = 'info@infofactory.it'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+ADMINS = (
+    ('Nello Polesello', 'polesello@infofactory.it'),
+)
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024 # 50 MB

@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 
 
 class Willer(models.Model):
@@ -50,10 +52,33 @@ class Answer(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = 'Rilevazione'
-        verbose_name_plural = 'Rilevazioni'
+        verbose_name = 'Rilevazione old'
+        verbose_name_plural = 'Rilevazioni old'
         ordering = ('-updated',)
 
+
+class Text(models.Model):
+    code = models.CharField(max_length=100, unique=True)
+    text = models.TextField(blank=True)
+    rich_text = RichTextField(blank=True)
+    
+
+    def __str__(self):
+        return self.code
+    
+
+    def get_text(self):
+        from django.utils.safestring import mark_safe
+        return self.text or mark_safe(self.rich_text) or self.code
+    
+    def get_text_short(self):
+        from django.utils.safestring import mark_safe
+        return self.text[:100] or mark_safe(self.rich_text[:100]) or self.code
+
+    class Meta:
+        verbose_name = 'Testo'
+        verbose_name_plural = 'Testi'
+        ordering = ('text',)
 
 
 class Translation(models.Model):
@@ -66,13 +91,15 @@ class Translation(models.Model):
         return self.label
         
     class Meta:
-        verbose_name = 'Traduzione'
-        verbose_name_plural = 'Traduzioni'
+        verbose_name = 'Traduzione old'
+        verbose_name_plural = 'Traduzioni old'
         ordering = ('label',)
 
 
 class Luogo(models.Model):
     name = models.CharField(max_length=100)
+    place_id = models.CharField(max_length=100, blank=True, help_text="Google Place ID")
+    address = models.CharField(max_length=200, blank=True)
     lat = models.FloatField()
     lon = models.FloatField()
 
@@ -87,6 +114,7 @@ class Luogo(models.Model):
 
 class Categoria(models.Model):
     name = models.CharField(max_length=100)
+    code = models.CharField(max_length=1, blank=True, default='R')
     ordine = models.IntegerField(default=1)
 
     def __str__(self):
@@ -166,3 +194,32 @@ class Risposta(models.Model):
         verbose_name = 'Risposta'
         verbose_name_plural = 'Risposte'
         ordering = ('ordine',)
+
+
+
+class Rilevazione(models.Model):
+    luogo = models.ForeignKey(Luogo, on_delete=models.CASCADE, related_name="rilevazioni")
+    domanda = models.ForeignKey(Domanda, on_delete=models.CASCADE, related_name="rilevazioni")
+    risposta = models.ForeignKey(Risposta, on_delete=models.CASCADE, related_name="rilevazioni", blank=True, null=True)
+    value = models.CharField(max_length=500, blank=True)
+    image = models.ImageField(upload_to='images', blank=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="rilevazioni", blank=True, null=True)
+    ip_address = models.CharField(max_length=100, blank=True)
+    data = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.luogo.name
+    
+
+    @property
+    def risposta_text(self):
+        if self.risposta:
+            return self.risposta.risposta
+        else:
+            return self.value
+
+    class Meta:
+        verbose_name = 'Rilevazione'
+        verbose_name_plural = 'Rilevazioni'
+        ordering = ('-data',)

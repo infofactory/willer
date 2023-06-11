@@ -1,0 +1,22 @@
+body {
+    background-color: var(--white);
+}
+
+header {
+    color: var(--blue);
+    background-color: var(--white);
+    border-bottom: 1px solid var(--grey);
+}
+
+header .languages a {
+    color: #444
+}
+
+.choices .choice label {
+    background-color: var(--white);
+    border:1px solid var(--grey);
+}
+
+.domanda {
+    border:1px solid var(--grey);
+}

@@ -15,33 +15,31 @@ html {
 }
 
 body {
-    background-color: var(--blue);
-    font-family: Inter, sans-serif;
+    background-color: var(--white);
+    font-family: sans-serif;
     padding: 0;
     margin: 0;
     overflow-x: hidden;
     width: 100%;
-    /* disallow text selection */
-    -webkit-user-select: none;
-    
 
 }
 
 header {
+    text-align: center;
     font-family: 'Gochi Hand', cursive;
-    color: var(--yellow);
-    background-color: #333;
+    color: var(--blue);
+    background-color: var(--white);
+    border-bottom: 1px solid var(--grey);
+    padding:1em 0;
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
     z-index: 1;
-    height: 50px;
-    line-height: 50px;
 }
 
 header h1 {
-    margin: 0 15px;
+    margin: 0;
 }
 
 header .languages {
@@ -49,17 +47,17 @@ header .languages {
     text-transform: uppercase;
     position: absolute;
     right: 20px;
-    top: 0;
+    top: 8px;
 }
 
 header .languages a {
     font-size: 14px;
     margin-left: 5px;
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     text-align: center;
-    line-height: 30px;
+    line-height: 20px;
     color: #fff;
     border: 1px solid #fff;
     text-decoration: none;
@@ -74,14 +72,14 @@ footer {
     text-align: center;
     background-color: #333;
     color: #fff;
-    padding: 6px 0;
+    padding: 10px 0;
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 1;
-    /* display: flex;
-    align-items: center; */
+    display: flex;
+    align-items: center;
 }
 
 footer .willeasy, footer .eu {
@@ -107,12 +105,12 @@ footer a {
 }
 
 h2 {
-    font-size: 26px;
+    font-size: 30px;
+    font-family: 'Gochi Hand', cursive;
 }
 
 h2 .number {
     background-color: var(--yellow);
-    color: #fff;
     height: 50px;
     width: 50px;
     border-radius: 50%;
@@ -142,8 +140,7 @@ img {
     display: flex;
     transform: translateX(0);
     transition: transform .3s;
-    margin-top: 50px;
-    padding-bottom: 110px;
+    padding: 60px 0 50px;
 }
 
 #map {
@@ -183,8 +180,8 @@ img {
 
 .pagination {
     display: flex;
+    justify-content: space-between;
     margin-top: 25px;
-    justify-content: center;
 }
 
 .btn {
@@ -204,40 +201,9 @@ img {
     border: 1px solid #000;
 }
 
-
-.title {
-    background-color: rgba(255,255,255,.3);
+.pagination .btn {
+    /*background-color: #fff;*/
 }
-
-.title > .slide {
-    padding: 20px 15px;
-    display: flex;
-    align-items: center;
-}
-
-.title .back a {
-    background-color: var(--yellow);
-    color: #000;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: inline-block;
-    line-height: 50px;
-    text-align: center;
-    cursor: pointer;
-}
-
-.title .back a:hover, .title .back a:focus {
-    background-color: #000;
-    color: #fff;
-}
-
-
-.title h2 {
-    margin: 0 0 0 20px;
-}
-
-
 
 .status {
     display: flex;
@@ -309,22 +275,23 @@ label.text-label {
 .choices .choice label {
     display: flex;
     justify-content: space-between;
-    background-color: var(--yellow);
+    background-color: var(--white);
     align-items: center;
     padding: 15px;
     border-radius: 15px;
     margin: 15px 0;
     cursor: pointer;
+    border:1px solid var(--grey);
 }
 
-.choices .choice label:not(.search):hover {
+.choices .choice label:hover {
     background-color: #000;
     color: #fff;
 }
 
 .choices .choice label h3 {
     margin: 0;
-    font-size: 24px;
+    font-size: 30px;
     text-align: center;
 }
 
@@ -346,32 +313,7 @@ label.text-label {
 }
 
 .choices .choice .place-info p {
-    margin: 0 15px;
-    text-align: center;
-}
-
-.choice form {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-}
-
-.choice input[type=search] {
-    width: 90%;
-    border: none;
-    border-bottom: 1px dashed #333;
-    font-size: 22px;
-    padding: 8px 8px 2px;
-    font-weight: bold;
-    background: none;
-    margin-right: 20px;
-}
-
-.choice input[type=search] + button {
-    outline: none;
-    border: none;
-    background: none;
-    font-size: 22px;
+    margin: 0;
 }
 
 
@@ -380,6 +322,7 @@ label.text-label {
     padding: 15px;
     border-radius: 15px;
     margin-bottom: 15px;
+    border:1px solid var(--grey);
 }
 
 .domanda h3 {
@@ -390,10 +333,6 @@ label.text-label {
     margin: 0;
     padding: 0;
     list-style: none;
-}
-
-.domanda li {
-    margin: 0 0 10px;
 }
 
 
@@ -451,8 +390,6 @@ input[type=number] {
     border-radius: 15px;
     background-color: #eee;
     object-fit: cover;
-    display: inline-block;
-    margin: 0 15px 15px 0;
 }
 
 .vote label {
