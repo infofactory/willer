@@ -1,0 +1,67 @@
+{% extends 'home/base.html' %}
+{% load static willer_tags i18n %}
+{% block content %}
+
+<div id="app">
+<div id="slideshow" :style="{transform: 'translateX(' + (-100 * page) + 'vw)'}">
+
+    <div class="container">
+        <div class="title">
+            <div class="slide">
+                <div class="back">
+                    <a href="{% url 'profile' %}"><i class="far fa-arrow-left"></i></a>
+
+                </div>
+                <h2>{% translate 'Register' %}</h2>
+            </div>
+        </div>
+        <div class="slide" data-page="0">
+     
+
+        <form method="post" class="domanda">
+            {% csrf_token %}
+
+            {% if register_form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in register_form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="field">
+                {{register_form.username.label_tag}}
+                {{register_form.username}}
+                {{register_form.username.errors}}
+            </div>
+
+            <div class="field">
+                {{register_form.email.label_tag}}
+                {{register_form.email}}
+                {{register_form.email.errors}}
+            </div>
+
+            <div class="field">
+                {{register_form.password1.label_tag}}
+                {{register_form.password1}}
+                {{register_form.password1.errors}}
+            </div>
+
+            <div class="field">
+                {{register_form.password2.label_tag}}
+                {{register_form.password2}}
+                {{register_form.password2.errors}}
+            </div>
+
+            <button name="register" class="btn">Register</button>
+        </form>
+   
+        </div>
+    </div>
+
+ 
+
+
+</div>
+</div>
+{% endblock content %}

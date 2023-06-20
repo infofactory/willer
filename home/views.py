@@ -9,11 +9,6 @@ from .models import *
 @csrf_exempt
 def home(request):
 
-    # Cambio lingua
-    if 'lang' in request.GET:
-        translation.activate(request.GET['lang'])
-        return redirect(request.path)
-        
     context = {}
 
     texts = {t.code: t.get_text for t in Text.objects.all()}

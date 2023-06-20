@@ -2,7 +2,7 @@ name: Butta su sul server!
 
 on:
   push:
-    branches: [xxxmain]
+    branches: [main]
 
 jobs:
   build:

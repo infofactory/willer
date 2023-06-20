@@ -30,11 +30,14 @@
 </head>
 <body>
     <header>
-        <h1>I am a willer</h1>
+        <h1><a href="/{{LANGUAGE_CODE}}/">I am a willer</a></h1>
+        <div class="user">
+            <a href="{% url 'profile' %}"><i class="fa-regular fa-user"></i> {% if request.user.is_authenticated %}{{request.user.username}}{% else %}{% translate 'Log in' %}{% endif %} </a>
+        </div>
         <div class="languages">
-            <a href="/?lang=en"{% if LANGUAGE_CODE == 'en' %} class="active"{% endif %}>EN</a>
-            <a href="/?lang=pt"{% if LANGUAGE_CODE == 'pt' %} class="active"{% endif %}>PT</a>
-            <a href="/?lang=it"{% if LANGUAGE_CODE == 'it' %} class="active"{% endif %}>IT</a>
+            <a href="/en/{{request.path|slice:'4:'}}"{% if LANGUAGE_CODE == 'en' %} class="active"{% endif %}>EN</a>
+            <a href="/pt/{{request.path|slice:'4:'}}"{% if LANGUAGE_CODE == 'pt' %} class="active"{% endif %}>PT</a>
+            <a href="/it/{{request.path|slice:'4:'}}"{% if LANGUAGE_CODE == 'it' %} class="active"{% endif %}>IT</a>
         </div>
     </header>
 
@@ -60,7 +63,7 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
         </div> -->
         
     </footer>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
     <script>
         // Create a Vue application
@@ -69,6 +72,7 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                 return {
                     esigenze: [],
                     esigenze_utente: [],
+                    esigenze_utente_changed: false,
                     page: 0,
                     lat: null,
                     lng: null,
@@ -95,10 +99,18 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                 }
             },
             mounted() {
-                fetch('/api/esigenze/')
+                fetch('/{{LANGUAGE_CODE}}/api/esigenze/')
                     .then(response => response.json())
                     .then(data => {
                         this.esigenze = data
+                    })
+                fetch('/{{LANGUAGE_CODE}}/users/profile/', {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                    }})
+                    .then(response => response.json())
+                    .then(data => {
+                        this.esigenze_utente = data.esigenze
                     })
             },
             computed: {
@@ -143,7 +155,7 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                 },
                 loadPlaces() {
                     this.geolocalizing = true
-                    fetch('/api/places/?location_type=' + this.location_type + '&lat=' + this.lat + '&lng=' + this.lng + '&query=' + this.search_query)
+                    fetch('/{{LANGUAGE_CODE}}/api/places/?location_type=' + this.location_type + '&lat=' + this.lat + '&lng=' + this.lng + '&query=' + this.search_query)
                         .then(response => response.json())
                         .then(data => {
                             this.stations = data
@@ -164,7 +176,7 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                 },
                 loadLifts(station) {
                     this.station = station
-                    fetch('/api/lifts/?station_id=' + this.station.pk)
+                    fetch('/{{LANGUAGE_CODE}}/api/lifts/?station_id=' + this.station.pk)
                         .then(response => response.json())
                         .then(data => {
                             this.lifts = data
@@ -179,7 +191,7 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                     const queryString = params.toString()
 
 
-                    fetch('/api/areas/?' + queryString)
+                    fetch('/{{LANGUAGE_CODE}}/api/areas/?' + queryString)
                         .then(response => response.json())
                         .then(data => {
                             this.areas = data
@@ -208,7 +220,7 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                     }
                 },
                 sendFeedback() {
-                    fetch('/api/segnalazioni/', {
+                    fetch('/{{LANGUAGE_CODE}}/api/segnalazioni/', {
                         method: 'POST',
                         body: new URLSearchParams({
                             status: this.status,
@@ -220,7 +232,7 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                 },
                 saveAnswers() {
                     this.sending = true
-                    fetch('/api/rilevazioni/', {
+                    fetch('/{{LANGUAGE_CODE}}/api/rilevazioni/', {
                         method: 'POST',
                         body: JSON.stringify({luogo:this.station.pk, rilevazioni: this.risposte}),
                         headers: {
@@ -237,8 +249,23 @@ Fund <br> through the Urban Innovative Actions Initiative</p>
                             alert('Error sending data')
                         }
                     })
-                  
                 },
+                savePreferences() {
+                    fetch('/{{LANGUAGE_CODE}}/users/profile/', {
+                        method: 'POST',
+                        body: JSON.stringify({esigenze: this.esigenze_utente}),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "X-Requested-With": "XMLHttpRequest",
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            this.esigenze_utente_changed = false
+                        } else {
+                            alert('Error sending data')
+                        }
+                    })
+                }
             },
             delimiters: ['[[', ']]'],
         })

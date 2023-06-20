@@ -1,10 +1,9 @@
 self.addEventListener('install', e => {
     console.log('Installo il Service Worker...');
-    e.waitUntil(caches.open('muro_cache').then(
+    e.waitUntil(caches.open('willer_cache').then(
         cache => {
             return cache.addAll([
-                '/static/home/js/scripts.js',
-                '/static/home/css/style.css?a',
+                '/static/home/css/style.css?c',
             ]).then(() => self.skipWaiting());
         }))
 });

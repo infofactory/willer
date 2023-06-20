@@ -23,15 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4qg!x&8oo-w*irmyuspg4)epi+&^ji#7um4tbim5!sv==0met5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['app.iamawiller.com', 'localhost']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'home',
+    'users',
     'voxpop',
     'modeltranslation',
     'ckeditor',
@@ -41,6 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +56,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -164,3 +171,15 @@ ADMINS = (
 )
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024 # 50 MB
+
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/users/profile/'
+
+SITE_ID = 1
+SITE_NAME = 'I am a Willer'
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]

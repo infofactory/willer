@@ -63,6 +63,7 @@
                     </label>
                 </div>
 
+{% comment %}
                 <div class="choice">
                     <label for="field-type-hotel" @click="location_type='H'; nextPage(); geoloc()">
                         <i class="fa-solid fa-hotel"></i>
@@ -70,13 +71,14 @@
                         <i class="fa-solid fa-chevron-right"></i>
                     </label>
                 </div>
+{% endcomment %}
             </div>
     
             
         </div>
     </div>
 
-
+{% if request.user.is_anonymous %}
     <div class="container" v-show="location_type!='M'">
         <div class="title">
             <div class="slide">
@@ -109,6 +111,7 @@
             
         </div>
     </div>
+{% endif %}
 
     <div class="container">
         <div class="title">

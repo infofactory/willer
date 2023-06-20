@@ -134,12 +134,12 @@ class Area(models.Model):
     ordine = models.IntegerField(default=1)
 
     def __str__(self):
-        return self.nome
+        return self.nome + ' (' + (self.categoria and self.categoria.name or '') + ')'
     
     class Meta:
         verbose_name = 'Area'
         verbose_name_plural = 'Aree'
-        ordering = ('ordine',)
+        ordering = ('categoria', 'ordine',)
 
 
 

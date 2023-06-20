@@ -1,0 +1,100 @@
+{% extends 'home/base.html' %}
+{% load static willer_tags i18n socialaccount %}
+{% block content %}
+
+<div id="app">
+<div id="slideshow" :style="{transform: 'translateX(' + (-100 * page) + 'vw)'}">
+
+    <div class="container">
+        <div class="title">
+            <div class="slide">
+                <div class="back">
+                    <a href="/{{LANGUAGE_CODE}}/"><i class="far fa-arrow-left"></i></a>
+
+                </div>
+                <h2>{% if request.user.is_authenticated %}
+                        {{ texts.esigenze_title }}
+                    {% else %}
+                        {% translate 'Log in' %}
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
+        <div class="slide" data-page="0">
+    
+            {% if request.user.is_authenticated %}
+
+            <div class="domanda">
+                <ul>
+                    {% if user.first_name or user.last_name %}<li><strong>{{user.get_full_name}}</strong></li>{% endif %}
+                    <li><strong>{% translate 'username' %}:</strong> {{user.username}}</li>
+                    {% if user.email %}<li><strong>{% translate 'email' %}:</strong> {{user.email}}</li>{% endif %}
+                </ul>
+
+                <p>{{ texts.esigenze_intro }}</p>
+                <ul>
+                    <li v-for="esigenza in esigenze" :key="esigenza.pk">
+                        <label><input @change="esigenze_utente_changed = true" v-model="esigenze_utente" type="checkbox" :value="esigenza.pk"> [[esigenza.fields.nome]]</label>
+                    </li>
+                </ul>
+        
+                <a @click="savePreferences()" :class="{'disabled': !esigenze_utente_changed}"  class="btn"> <i class="far fa-save"></i> {% translate 'Save' %}</a>
+            </div>
+
+<p class="text-center"><a href="{% url 'logout' %}" class="btn"><i class="far fa-sign-out"></i> {% translate 'Log out' %}</a></p>
+            {% else %}
+
+
+            <form action="{% provider_login_url "google" %}" method="post" class="text-center">
+                {% csrf_token %}
+                <button class="btn btn-google"><i class="fab fa-google"></i> {% translate 'Login with Google' %}</button>
+            </form>
+
+
+        <form method="post" class="domanda" style="margin-top: 30px">
+            {% csrf_token %}
+
+            <h2 style="margin-top: 0;">Login</h2>
+
+            {% if login_form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in login_form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="field">
+                {{login_form.username.label_tag}}
+                {{login_form.username}}
+            </div>
+
+            <div class="field">
+                {{login_form.password.label_tag}}
+                {{login_form.password}}
+            </div>
+
+            <button name="login" class="btn"> <i class="far fa-sign-in"></i>  Login</button>
+
+
+            <p class="text-center">
+                <a href="{% url 'password_reset' %}"><i class="far fa-key"></i> {% translate 'Password reset' %}</a>
+            </p>
+        
+        </form>
+
+            <p class="text-center">
+                <a href="{% url 'register' %}" class="btn"><i class="far fa-user-plus"></i> {% translate 'Register' %}</a>
+            </p>
+
+
+
+            {% endif %}
+   
+        </div>
+    </div>
+
+
+</div>
+</div>
+{% endblock content %}
