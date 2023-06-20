@@ -1,0 +1,38 @@
+name: Butta su sul server!
+
+on:
+  push:
+    branches: [xxxmain]
+
+jobs:
+  build:
+    runs-on: Ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Copia codice via scp
+        uses: appleboy/scp-action@master
+        with:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          KEY: ${{ secrets.SSHKEY }}
+          source: "."
+          target: "/home/polesello/willer_env/willer"
+
+      - name: Esegui comandi
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          KEY: ${{ secrets.SSHKEY }}
+          script: | 
+            cd willer_env/
+            . bin/activate
+            cd willer/
+            pip install -r requirements.txt
+            python manage.py makemigrations --settings=willer.settings
+            python manage.py migrate --settings=willer.settings
+            python manage.py collectstatic --no-input
+            deactivate
+            sudo supervisorctl restart willer
