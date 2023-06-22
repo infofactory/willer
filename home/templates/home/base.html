@@ -31,13 +31,15 @@
 <body>
     <header>
         <h1><a href="/{{LANGUAGE_CODE}}/">I am a willer</a></h1>
-        <div class="user">
-            <a href="{% url 'profile' %}"><i class="fa-regular fa-user"></i> {% if request.user.is_authenticated %}{{request.user.username}}{% else %}{% translate 'Log in' %}{% endif %} </a>
-        </div>
-        <div class="languages">
-            <a href="/en/{{request.path|slice:'4:'}}"{% if LANGUAGE_CODE == 'en' %} class="active"{% endif %}>EN</a>
-            <a href="/pt/{{request.path|slice:'4:'}}"{% if LANGUAGE_CODE == 'pt' %} class="active"{% endif %}>PT</a>
-            <a href="/it/{{request.path|slice:'4:'}}"{% if LANGUAGE_CODE == 'it' %} class="active"{% endif %}>IT</a>
+        <div class="tools">
+            <div class="user">
+                <a href="{% url 'profile' %}"><i class="fa-regular fa-user"></i> {% if request.user.is_authenticated %}{{request.user.username}}{% else %}{% translate 'Log in' %}{% endif %} </a>
+            </div>
+            <div class="languages">
+                <a href="/en/{{request.path|slice:'4:'}}"{% if LANGUAGE_CODE == 'en' %} class="active"{% endif %}>EN</a>
+                <a href="/pt/{{request.path|slice:'4:'}}"{% if LANGUAGE_CODE == 'pt' %} class="active"{% endif %}>PT</a>
+                <a href="/it/{{request.path|slice:'4:'}}"{% if LANGUAGE_CODE == 'it' %} class="active"{% endif %}>IT</a>
+            </div>            
         </div>
     </header>
 
