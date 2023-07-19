@@ -159,8 +159,8 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # Amazon SES
 EMAIL_HOST = 'email-smtp.eu-west-1.amazonaws.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'AKIASVRD6E4QSEFY5E5U'
-EMAIL_HOST_PASSWORD = 'BAt7Nhoy9dm9HTjQKhG58yR836Vqzhvfu9HOQQmxuI8J'
+EMAIL_HOST_USER = 'AKIARTVD4Y3VMBKGIITZ'
+EMAIL_HOST_PASSWORD = 'BAt7Nvo)6yQFerl58yR836VqzzxMLSW9934fI8J'
 EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = 'info@infofactory.it'
